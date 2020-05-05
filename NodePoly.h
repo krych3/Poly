@@ -52,10 +52,6 @@ void PrintList_backwards(node<T> *head)
     {
         while( print != nullptr )
         {
-        //        //want to see whats in box
-        //        cout << *print;
-        //        cout << "";
-        //        //walker++
             print = print-> _next;
         }
         while( print != nullptr )
@@ -64,10 +60,8 @@ void PrintList_backwards(node<T> *head)
             cout << "";
             print = print-> beforeThis ;
         }
-
            cout << "|||";
     }
-
 }
 template <class T>
 void PrintCursor(node<T>* head, node<T>* cursor )
