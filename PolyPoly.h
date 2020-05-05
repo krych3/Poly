@@ -18,10 +18,9 @@ public:
 
 //delete these ?
     Poly(const Poly& other);                //copy constructor
-    Poly& operator =(const Poly& rhs);      //assigment
+    Poly& operator =( const Poly& rhs);      //assigment
     ~Poly();                                //destructor
 
-    
 //need to do
     
     Poly& operator *= (const Term& t);
@@ -30,8 +29,6 @@ public:
     Poly& operator += (const Poly& RHS);
     Poly& operator -= (const Poly& RHS);
     
- 
-
 //all done
     friend bool operator == (const Poly& lhs, const Poly& rhs);
     friend bool operator != (const Poly& lhs, const Poly& rhs);
@@ -73,58 +70,103 @@ private:
 };
 
 
+
 int const SIZE = 4 ;
 
-//Poly::Poly():List(true,false)
+
 Poly::Poly()
 {
-    List<Term>::Iterator it ;
     _order = 0;
-    for( it = _poly.Begin(); it != _poly.End(); it++)
+    _coefs = new double[SIZE];
+    for ( int i = 0; i < SIZE; i++ )
     {
-        _poly = 0;
+       _coefs[i] = 0.0;
     }
-    
 }
-
 Poly::Poly(double term_array[], int order)
 {
     //account for x^0 with + 1 for overal order
-    List<Term>::Iterator it ;
+    _poly = new List<Term>;
+    
     _order = order ;
     _coefs = new double[order + 1];
     
-    for( it = _poly.Begin(); it != _poly.End(); it++)
-    {
-        ( _poly[it]) = term_array[it];
-
-    }
     for ( int i = 0; i < order + 1; i++ )
     {
        _coefs[i] = term_array[i];
     }
 }
 
+//the BIG 3
+
+//copy constructor
+Poly::Poly(const Poly& other)
+{//call allocate then copy
+    //check to see if power entered is equal to power of _order
+    
+    _order = other._order ;
+    int size = other._order;
+    
+    _coefs = new double[size + 1];
+    // copy_list(_coefs, rhs._coefs, _order+1);
+    for (int i = 0; i < _order + 1; i++)
+    {
+        _coefs[i] = other._coefs[i];
+    }
+}
+
+
+//assignment
+Poly& Poly::operator = (const Poly& rhs)
+{
+    //check for self reference
+    if (this == &rhs)
+    {
+       return *this;
+    }
+    delete[] _coefs;
+    _coefs = new double[rhs._order + 1];
+    _order = rhs._order;
+     assert(_coefs != nullptr && "i has to be b/w 0 & max");
+    //copy_list(_coefs, rhs._coefs, _order+1);
+    
+    for (int i = 0; i < _order + 1; i++)
+    {
+       _coefs[i] = rhs._coefs[i];
+    }
+    return *this;
+}
+
+//destructor
+Poly::~Poly()
+{
+    _order = 0;
+    const bool debug = true;
+//    if (debug) cout << "DESTRUCTOR FIRED: " << *_coefs << endl << endl << endl ;
+    delete [] _coefs;
+    _coefs = nullptr ;
+}
 
 Poly& Poly::operator *= (const Term& t)
 {
     List<Term>::Iterator it ;
-    //begin is a List<T>::Iterator
-    
+
     for( it = _poly.Begin(); it != _poly.End(); it++)
     {
         *it *= t;
-        
-        // *it= term
-        // t = term
     }
-    
     return *this;
 }
 
 Poly& Poly::operator *= (const Poly& RHS)
 {
-    List<Term>::Iterator it ; //poly
+    List<Term>::Iterator it;
+    Poly result = RHS;
+    
+    for( it = _poly.Begin(); it != _poly.End(); it++)
+    {
+      result *= (*it);
+    }
     
     return *this;
 }
@@ -132,30 +174,21 @@ Poly& Poly::operator *= (const Poly& RHS)
 Poly& Poly::operator += (const Term& t)
 {
     List<Term>::Iterator it ;
-    _poly.Insert(t);
     
-    //if list is unique
-    
-    
-    
-  //if( List(true,false) == true)
-
-   
-//    Term result;
-//    result = t;
-//  return *this += t;
-    
+    for( it = _poly.Begin(); it != _poly.End(); it++)
+    {
+        *it += t;
+    }
+      
     return *this;
 }
 
 Poly& Poly::operator += (const Poly& RHS)
 {
-    List<Term>::Iterator it ;
-    for( it = _poly.Begin(); it != _poly.End(); it++)
+    for(int i=0; i < RHS._order + 1; i++)
     {
-        RHS[it]
+        _coefs[i] += RHS._coefs[i];
     }
-    
     return *this;
 }
 
@@ -169,6 +202,7 @@ Poly& Poly::operator -= (const Poly& RHS)
     
     return *this;
 }
+
 
 bool operator == (const Poly& lhs, const Poly& rhs)
 {
@@ -466,85 +500,6 @@ void Poly::fix_order()
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////the BIG 3
-//
-////copy constructor
-//Poly::Poly(const Poly& other)
-//{
-//
-//
-//
-//
-//    _order = other._order ;
-//    int size = other._order;
-//
-//    _coefs = new double[size + 1];
-//    // copy_list(_coefs, rhs._coefs, _order+1);
-//    for (int i = 0; i < _order + 1; i++)
-//    {
-//        _coefs[i] = other._coefs[i];
-//    }
-//}
-//
-//
-////assignment
-//Poly& Poly::operator = (const Poly& rhs)
-//{
-//    //check for self reference
-//    if (this == &rhs)
-//    {
-//       return *this;
-//    }
-//    delete[] _coefs;
-//    _coefs = new double[rhs._order + 1];
-//    _order = rhs._order;
-//     assert(_coefs != nullptr && "i has to be b/w 0 & max");
-//    //copy_list(_coefs, rhs._coefs, _order+1);
-//
-//    for (int i = 0; i < _order + 1; i++)
-//    {
-//       _coefs[i] = rhs._coefs[i];
-//    }
-//
-//    return *this;
-//}
-//
-//
-////destructor
-//Poly::~Poly()
-//{
-//
-//    _order = 0;
-//    const bool debug = true;
-////    if (debug) cout << "DESTRUCTOR FIRED: " << *_coefs << endl << endl << endl ;
-//    delete [] _coefs;
-//    _coefs = nullptr ;
-//}
 
 
 
